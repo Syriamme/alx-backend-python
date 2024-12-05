@@ -17,15 +17,16 @@ def connect_db():
         return None
     
 
-def create_db(connection):
+def create_database(connection):
+    cursor = connection.cursor()
     try:
-        mycursor = connection.cursor()
-        mycursor.execute("CREATE DATABASE FNOT EXISTS ALX_prodev")
-        print("This database already exists")
-    
+        # Correct SQL command
+        cursor.execute("CREATE DATABASE IF NOT EXISTS ALX_prodev;")
+        print("Database ALX_prodev created or already exists.")
     except Error as e:
-        print(f"Error encoutered: {e}")
-
+        print(f"Error creating database: {e}")
+    finally:
+        cursor.close()
 
 def connect_to_prodev():
     try:
@@ -44,20 +45,23 @@ def connect_to_prodev():
         return None
 
 def create_table(connection):
+    cursor = connection.cursor()
     try:
-        cursor = connection.cursor()
-        table_query = """
+        # Correct SQL to create the user_data table
+        create_table_query = """
         CREATE TABLE IF NOT EXISTS user_data (
-            user_id PRIMARY KEY,
-            name VARCHAR NOT NULL,
-            email VARCHAR NOT NULL,
-            age DECIMAL NOT NULL
-        )
+            user_id CHAR(36) PRIMARY KEY,
+            name VARCHAR(255) NOT NULL,
+            email VARCHAR(255) NOT NULL,
+            age INT NOT NULL
+        );
         """
-        cursor.execute(table_query)
-        print("user_data table has been created already.")
-    except Error as e:
-        print(f"Error when crerating the table: {e}")
+        cursor.execute(create_table_query)
+        print("Table 'user_data' created successfully or already exists.")
+    except mysql.connector.Error as err:
+        print(f"Error when creating the table: {err}")
+    finally:
+        cursor.close()
 
 def insert_data(connection, data):
     try:
@@ -70,7 +74,7 @@ def insert_data(connection, data):
                 user_id = str(uuid.uuid4())
                 name = row['name']
                 email = row['email']
-                age = float(row['age'])  # Convert age to decimal
+                age = int (row['age'])
                 
                 # Check if the email already exists in the database
                 cursor.execute("SELECT COUNT(*) FROM user_data WHERE email = %s", (email,))
