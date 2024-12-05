@@ -1,4 +1,4 @@
-from connector import connect_to_prodev
+from seed import connect_to_prodev
 
 """
 a generator to fetch and process data in batches from the users database
@@ -6,8 +6,7 @@ a generator to fetch and process data in batches from the users database
 
 def stream_users():
     connector = connect_to_prodev()
-    mycursor = connector.cursor()
-
+    mycursor = connector.cursor(dictionary=True)
     try:
         # Executing the SQL query
         mycursor.execute("SELECT * FROM user_data")
