@@ -3,6 +3,10 @@ import uuid
 import mysql.connector
 from mysql.connector import Error
 
+"""
+a generator that streams rows from an SQL database one by one
+"""
+
 def connect_db():
     try:
         connecting =mysql.connector.connect(
