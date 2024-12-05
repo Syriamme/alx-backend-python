@@ -7,9 +7,10 @@ a generator to fetch and process data in batches from the users database
 def stream_users_in_batches(batch_size):
 
     # Database connection
+    
     connector = connect_to_prodev()
     mycursor = connector.cursor(dictionary=True)
-    
+
     mycursor.execute("SELECT * FROM user_data")
     
     while True:
@@ -22,6 +23,7 @@ def stream_users_in_batches(batch_size):
     connector.close()
 
 # Processing each batch of users and filtering users over age 25
+
 def batch_processing(batch_size):
     for batch in stream_users_in_batches(batch_size):
         
