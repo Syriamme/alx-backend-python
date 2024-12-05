@@ -25,15 +25,15 @@ def paginate_users(page_size, offset):
 # Function for lazily paginating users data
 
 def lazy_paginate(page_size):
-    offset = 0
+    offseting = 0
 
     while True:
         # Fetch the users for the current page
-        users = paginate_users(page_size, offset)
+        users = paginate_users(page_size, offseting)
 
         if not users:
             break  # Exit if no data is no longer returned
 
         yield users
 
-        offset += page_size  # Updating offset for next page
+        offseting += page_size  # Updating offset for next page
