@@ -22,12 +22,12 @@ def stream_users_in_batches(batch_size):
     mycursor.close()
     connector.close()
 
-# Processing each batch of users and filtering users over age 25
+# Processing each batch of users and filtering users above 25
 
 def batch_processing(batch_size):
     for batch in stream_users_in_batches(batch_size):
         
-        # Filtering users over the age of 25
+        # Filtering users above 25
         filtered_batch = [user for user in batch if user['age'] > 25]
         
         for user in filtered_batch:
