@@ -5,7 +5,7 @@ a generator to fetch and process data in batches from the users database
 """
 
 def stream_users():
-    connecto = connect_to_prodev()
+    connector = connect_to_prodev()
     mycursor = connector.cursor()
 
     try:
