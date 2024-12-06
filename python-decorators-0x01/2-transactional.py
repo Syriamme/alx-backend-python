@@ -27,8 +27,7 @@ def with_db_connection(myfunc):
 def transactional(myfunc):
     @functools.wraps(myfunc)
     def mywrapper(connection, *myargs, **mykwargs):
-        try:
-            
+        try:            
             myresult = myfunc(connection, *myargs, **mykwargs)
             # Committing transaction if no errors happens
             connection.commit()
