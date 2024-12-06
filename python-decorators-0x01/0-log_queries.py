@@ -1,18 +1,27 @@
 import sqlite3
-from datetime import datetime  # Import datetime for timestamps
+import functools
+from datetime import datetime
 
-# Decorator to log SQL queries with timestamps
+"""
+writing a decorator log_queries that logs the SQL query before executing it.
+
+Prototype: def log_queries()
+"""
+
+#a the decorator log queries
 def log_queries(func):
-    def wrapper(*args, **kwargs):
-        # Get the current timestamp
-        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        # Log the SQL query (assumes it's the first argument)
-        query = args[0] if args else None
-        if query:
-            print(f"[{timestamp}] Executing query: {query}")
-        # Execute the original function
-        return func(*args, **kwargs)
-    return wrapper
+    @functools.wraps(func)
+    def mywrapper(*myargs, **mykwargs):
+        timestp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+        thequery = myargs[0] if myargs else None
+        if thequery:
+            print(f"[{timestp}] Executing my query: {thequery}")
+
+        return func(*myargs, **mykwargs)
+    return mywrapper
+
+##fetch_all_users is being decorated by @log_queries
 
 @log_queries
 def fetch_all_users(query):
