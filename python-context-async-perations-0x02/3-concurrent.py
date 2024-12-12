@@ -27,11 +27,11 @@ async def async_fetch_older_users():
         for row in data:
             print(row)
 
-async def fetching_conc():
+async def fetch_concurrently():
     await asyncio.gather(
         async_fetch_users(),
         async_fetch_older_users()
     )
 
 if __name__ == "__main__":
-    asyncio.run(fetching_conc())
+    asyncio.run(fetch_concurrently())
