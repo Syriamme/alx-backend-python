@@ -10,9 +10,8 @@ async def async_fetch_users():
         data = await cursor.fetchall()
 
         await cursor.close()
-        
-        for row in data:
-            print(row)
+
+        return data
 
 #asynchronous function to fetch users older than 40
 async def async_fetch_older_users():
@@ -24,14 +23,21 @@ async def async_fetch_older_users():
 
         await cursor.close()
         
-        for row in data:
-            print(row)
+        return data
 
 async def fetch_concurrently():
-    await asyncio.gather(
+    all_usrs, older_usrs = await asyncio.gather(
         async_fetch_users(),
         async_fetch_older_users()
     )
+    print("All users:")
+    for row in all_usrs:
+        print(row)
+    
+    
+    print("\n All users that are Older than 40:")
+    for row in older_usrs:
+        print(row)
 
 if __name__ == "__main__":
     asyncio.run(fetch_concurrently())
