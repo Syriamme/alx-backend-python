@@ -31,7 +31,6 @@ class DatabaseConnection:
             self.connection = None
         return self.connection
 
-#Closes db connection if open
     def close(self):
         if self.connection and self.connection.is_connected():
             self.connection.close()
@@ -43,3 +42,18 @@ class DatabaseConnection:
 
     def __exit__(self, exc_type, exc_value, traceback):
         self.close()
+
+#Context manager and the SELECT Query
+def query_database():
+    query = "SELECT * FROM user_data"
+    
+    with DatabaseConnection("localhost", "root", "Roniel@123", "ALX_prodev") as connection:
+        if connection:
+            cursor = connection.cursor()
+            cursor.execute(query)
+            results = cursor.fetchall()
+            for row in results:
+                print(row)
+            cursor.close()
+
+query_database()
