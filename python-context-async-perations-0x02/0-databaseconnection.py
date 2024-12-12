@@ -45,7 +45,7 @@ class DatabaseConnection:
 
 #Context manager and the SELECT Query
 def query_database():
-    query = "SELECT * FROM user"
+    query = "SELECT * FROM users"
     
     with DatabaseConnection("localhost", "root", "Roniel@123", "dental_clinic") as connection:
         if connection:
