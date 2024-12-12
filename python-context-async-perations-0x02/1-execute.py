@@ -58,7 +58,7 @@ class  ExecuteQuery:
 
 #Context manager and the SELECT Query
 def query_database():
-    qry = "SELECT * FROM users"
+    qry = "SELECT * FROM users WHERE age > ?"
     param = (25,)
     
     with ExecuteQuery("localhost", "root", "Roniel@123", "dental_clinic") as db_manager:
