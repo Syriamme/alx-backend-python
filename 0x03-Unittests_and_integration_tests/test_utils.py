@@ -24,7 +24,7 @@ class TestAccessNestedMap(unittest.TestCase):
         map_test: Dict,
         path: Tuple[str],
         value: Union[Dict, int],
-            ):
+    ):
         """
         Test the function returns the expected result.
 
