@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import unittest
 from parameterized import parameterized
 from utils import access_nested_map
@@ -32,4 +33,3 @@ class TestAccessNestedMap(unittest.TestCase):
         else:
             # Otherwise, check if the actual result matches the expected
             self.assertEqual(access_nested_map(nested_map, path), expected)
-
