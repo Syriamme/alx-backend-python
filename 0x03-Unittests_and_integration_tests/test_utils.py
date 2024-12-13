@@ -1,29 +1,35 @@
-#!/usr/bin/env python3
-"""
-Testing the access_nested_map function.
-"""
-
 import unittest
 from parameterized import parameterized
 from utils import access_nested_map
 
+
 class TestAccessNestedMap(unittest.TestCase):
     """
-    access_nested_map function test case.
+    Test cases for the access_nested_map function.
     """
 
     @parameterized.expand([
-        ("test_simple_key", {"a": 1}, ("a",), 1),
-        ("test_nested_key", {"a": {"b": 2}}, ("a",), {"b": 2}),
-        ("test_deep_nested_key", {"a": {"b": 2}}, ("a", "b"), 2),
+        ("simple_key", {"a": 1}, ("a",), 1),
+        ("nested_key", {"a": {"b": 2}}, ("a",), {"b": 2}),
+        ("deeply_nested_key", {"a": {"b": 2}}, ("a", "b"), 2),
+        ("missing_key", {"a": {"b": 2}}, ("a", "c"), KeyError),  # Add this test to check for missing keys
     ])
-    def test_access_nested_map(self, map_test, path, value):
+    def test_access_nested_map(self, _, nested_map, path, expected):
         """
-        Test the function returns the expected result.
+        Test that access_nested_map returns
+        the expected result for given inputs.
 
         Args:
-            map_test (dict): Dictionary to test.
-            path (tuple): Key sequence.
-            expected_value (Any): xpected result.
+            _: Unused, a placeholder for the test name.
+            nested_map (dict): The dictionary to test.
+            path (tuple): The sequence of keys to test.
+            expected (Any): The expected result or exception.
         """
-        self.assertEqual(access_nested_map(map_test, path), value)
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            # If the expected result is an exception, check if it is raised
+            with self.assertRaises(expected):
+                access_nested_map(nested_map, path)
+        else:
+            # Otherwise, check if the actual result matches the expected
+            self.assertEqual(access_nested_map(nested_map, path), expected)
+
