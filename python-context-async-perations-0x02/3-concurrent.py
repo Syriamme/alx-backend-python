@@ -1,4 +1,5 @@
 import aiosqlite
+
 import asyncio
 
 #asynchronous function to fetch all users
@@ -34,7 +35,7 @@ async def fetch_concurrently():
     for row in all_usrs:
         print(row)
     
-    
+
     print("\n All users that are Older than 40:")
     for row in older_usrs:
         print(row)
