@@ -25,6 +25,22 @@ class TestAccessNestedMap(unittest.TestCase):
         Args:
             map_test (dict): Dictionary to test.
             path (tuple): Key sequence.
-            expected_value (Any): xpected result.
+            expected_value (Any): expected result.
         """
         self.assertEqual(access_nested_map(map_test, path), value)
+
+    @parameterized.expand([
+        ({}, ("a",)),
+        ({"a": 1}, ("a", "b")),
+    ])
+    def test_access_nested_map_exception(self, map_test, path, exception):
+        """
+        Test the function raises an exception.
+
+        Args:
+            map_test (dict): Dictionary to test.
+            path (tuple): Key sequence.
+            exception (Any): expected to be raised.
+        """
+        with self.assertRaises(exception):
+            (access_nested_map(map_test, path))
