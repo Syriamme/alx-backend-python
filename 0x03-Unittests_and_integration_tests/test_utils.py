@@ -56,31 +56,25 @@ class TestGetJson(unittest.TestCase):
     The test class has a special focus
     on mocking external HTTP calls.
     """
-
+    @parameterized.expand([
+        ("http://example.com", {"payload": True}),
+        ("http://holberton.io", {"payload": False}),
+    ])
     @patch('requests.get')
-    def test_get_json(self, mock_get):
+    def test_get_json(self, test_url, test_payload, mock_get):
         """
         Mocked HTTP responses to test the function.
         This will return a mock object
         with a json method that returns test_payload
         Args:
+            test_url(str): The url to be used.
+            test_payload: The expected Json payload
             mock_get: Mocking the requests.get method.
         """
-        # Defining the test cases
-        test_case = [
-            ("http://example.com", {"payload": True}),
-            ("http://holberton.io", {"payload": False}),
-        ]
-
-        for test_url, test_payload in test_case:
-            mock_response = Mock()
-            mock_response.json.return_value = test_payload
-            mock_get.return_value = mock_response
-
-            result = get_json(test_url)
-
-            self.assertEqual(result, test_payload)
-
-            mock_get.assert_called_once_with(test_url)
-
-            mock_get.reset_mock()
+        mock_response = Mock()
+        mock_response.json.return_value = test_payload
+        mock_get.return_value = mock_response
+        result = get_json(test_url)
+        self.assertEqual(result, test_payload)
+        mock_get.assert_called_once_with(test_url)
+        mock_get.reset_mock()
