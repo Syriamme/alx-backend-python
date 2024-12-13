@@ -5,7 +5,6 @@ Testing the access_nested_map function.
 
 import unittest
 from parameterized import parameterized
-from typing import Dict, Tuple, Union
 from utils import access_nested_map
 
 
