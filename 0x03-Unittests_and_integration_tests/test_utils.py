@@ -17,12 +17,11 @@ class TestAccessNestedMap(unittest.TestCase):
         ("test_nested_key", {"a": {"b": 2}}, ("a",), {"b": 2}),
         ("test_deep_nested_key", {"a": {"b": 2}}, ("a", "b"), 2),
     ])
-    def test_access_nested_map(self, _, map_test, path, value):
+    def test_access_nested_map(self, map_test, path, value):
         """
         Test the function returns the expected result.
 
         Args:
-            _ (str): testname.
             map_test (dict): Dictionary to test.
             path (tuple): Key sequence.
             expected_value (Any): xpected result.
