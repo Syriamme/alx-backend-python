@@ -7,6 +7,7 @@ import unittest
 from parameterized import parameterized
 from utils import access_nested_map
 
+
 class TestAccessNestedMap(unittest.TestCase):
     """
     access_nested_map function test case.
@@ -17,7 +18,7 @@ class TestAccessNestedMap(unittest.TestCase):
         ("test_nested_key", {"a": {"b": 2}}, ("a",), {"b": 2}),
         ("test_deep_nested_key", {"a": {"b": 2}}, ("a", "b"), 2),
     ])
-    def test_access_nested_map(self, _, map_test, path, value):
+    def test_access_nested_map(self, _, nested_map, path, expected):
         """
         Test the function returns the expected result.
 
@@ -27,4 +28,8 @@ class TestAccessNestedMap(unittest.TestCase):
             path (tuple): Key sequence.
             expected_value (Any): xpected result.
         """
-        self.assertEqual(access_nested_map(map_test, path), value)
+        try:
+            result = access_nested_map(nested_map, path)
+            self.assertEqual(result, expected)
+        except Exception as e:
+            self.fail(f"Test failed for path {path} with error: {e}")
