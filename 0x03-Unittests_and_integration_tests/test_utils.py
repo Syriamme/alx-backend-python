@@ -1,26 +1,30 @@
+#!/usr/bin/env python3
+"""
+Testing the access_nested_map function.
+"""
+
 import unittest
 from parameterized import parameterized
-from typing import Dict, Tuple, Union
 from utils import access_nested_map
-
 
 class TestAccessNestedMap(unittest.TestCase):
     """
-    Tests for the `access_nested_map` function.
+    access_nested_map function test case.
     """
+
     @parameterized.expand([
         ({"a": 1}, ("a",), 1),
         ({"a": {"b": 2}}, ("a",), {"b": 2}),
         ({"a": {"b": 2}}, ("a", "b"), 2),
     ])
-    def test_access_nested_map(
-        self,
-        nested_map: Dict,
-        path: Tuple[str],
-        expected: Union[Dict, int]
-    ) -> None:
+    def test_access_nested_map(self, _, map_test, path, value):
+        """
+        Test the function returns the expected result.
 
+        Args:
+            _ (str): testname.
+            map_test (dict): Dictionary to test.
+            path (tuple): Key sequence.
+            expected_value (Any): xpected result.
         """
-        Tests that `access_nested_map` returns the expected result.
-        """
-        self.assertEqual(access_nested_map(nested_map, path), expected)
+        self.assertEqual(access_nested_map(map_test, path), value)
