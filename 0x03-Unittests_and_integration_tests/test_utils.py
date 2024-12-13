@@ -85,6 +85,9 @@ class TestMemoize(unittest.TestCase):
     Test case class for memoization behavior
     """
     def test_memoize(self):
+        """
+        Testing the memoized output
+        """
         class TestClass:
             def a_method(self):
                 """
