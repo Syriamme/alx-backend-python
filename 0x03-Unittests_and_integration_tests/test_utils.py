@@ -29,7 +29,6 @@ class TestAccessNestedMap(unittest.TestCase):
         Test the function returns the expected result.
 
         Args:
-            _ (str): testname.
             map_test (dict): Dictionary to test.
             path (tuple): Key sequence.
             expected_value (Any): xpected result.
