@@ -21,9 +21,9 @@ class TestAccessNestedMap(unittest.TestCase):
     ])
     def test_access_nested_map(
         self,
-        map_test: Dict,
-        path: Tuple[str],
-        value: Union[Dict, int],
+        map_test,
+        path,
+        value,
     ):
         """
         Test the function returns the expected result.
