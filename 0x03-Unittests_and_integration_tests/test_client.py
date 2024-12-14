@@ -57,20 +57,56 @@ def test_public_repos_url(self):
         self.assertEqual(res, mocked_payload["repos_url"])
 
 @patch("client.get_json")
-@patch("client.GithubOrgClient._public_repos_url",
-       new_callable=unittest.mock.PropertyMock)
-def test_public_repos(self, mock_public_repos_url, mock_get_json):
-    mock_get_json.return_value = [
-        {"name": "repo1"},
-        {"name": "repo2"}
-    ]
-    mock_public_repos_url.return_value = (
-        "https://api.github.com/orgs/test_org/repos"
-    )
-    client = GithubOrgClient("test_org")
-    result = client.public_repos()
-    self.assertEqual(result, ["repo1", "repo2"])
-    mock_public_repos_url.assert_called_once()
-    mock_get_json.assert_called_once_with(
-        "https://api.github.com/orgs/test_org/repos"
-    )
+def test_public_repos(mock_get_json):
+
+    # Short test payload for Google repos
+    test_payload_google = {
+        'repos_url': "https://api.github.com/users/google/repos",
+        'repos': [
+            {"name": "google-api", "private": False},
+            {"name": "google-cloud", "private": False}
+        ]
+    }
+
+    # Mock the `get_json` method to return Google's repos payload
+    mock_get_json.return_value = test_payload_google["repos"]
+
+    # Mock the `_public_repos_url` property
+    with patch("client.GithubOrgClient._public_repos_url", new_callable=PropertyMock) as mock_public_repos_url:
+        mock_public_repos_url.return_value = test_payload_google["repos_url"]
+
+        # Create the GithubOrgClient instance for Google
+        client_google = GithubOrgClient("google")
+
+        # Call the `public_repos` method and assert the expected result
+        assert client_google.public_repos() == ["google-api", "google-cloud"]
+
+        # Ensure the mocked property and get_json were called once
+        mock_public_repos_url.assert_called_once()
+        mock_get_json.assert_called_once_with(test_payload_google["repos_url"])
+
+    # Short test payload for Microsoft repos
+    test_payload_microsoft = {
+        'repos_url': "https://api.github.com/users/microsoft/repos",
+        'repos': [
+            {"name": "azure-sdk", "private": False},
+            {"name": "microsoft-auth", "private": False}
+        ]
+    }
+
+    # Mock the `get_json` method to return Microsoft's repos payload
+    mock_get_json.return_value = test_payload_microsoft["repos"]
+
+    # Mock the `_public_repos_url` property for Microsoft
+    with patch("client.GithubOrgClient._public_repos_url", new_callable=PropertyMock) as mock_public_repos_url:
+        mock_public_repos_url.return_value = test_payload_microsoft["repos_url"]
+
+        # Create the GithubOrgClient instance for Microsoft
+        client_microsoft = GithubOrgClient("microsoft")
+
+        # Call the `public_repos` method and assert the expected result
+        assert client_microsoft.public_repos() == ["azure-sdk", "microsoft-auth"]
+
+        # Ensure the mocked property and get_json were called once
+        mock_public_repos_url.assert_called_once()
+        mock_get_json.assert_called_once_with(test_payload_microsoft["repos_url"])
