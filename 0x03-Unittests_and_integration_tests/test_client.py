@@ -73,22 +73,22 @@ def test_public_repos(self, mock_get_json):
 
     # Mock the _public_repos_url property
     with patch.object(
-        GithubOrgClient,
-        "_public_repos_url",
-        new_callable=unittest.mock.PropertyMock,
-        return_value="https://api.github.com/orgs/google/repos"
-    ) as mock_repos_url:
-        # Instantiate GithubOrgClient
-        client = GithubOrgClient("google")
+            GithubOrgClient, "_public_repos_url", new_callable=PropertyMock, return_value="https://api.github.com/orgs/google/repos"
+        ) as mock_repos_url:
 
-        # Call the public_repos method
-        result = client.public_repos()
+            # Create an instance of GithubOrgClient
+            client = GithubOrgClient("google")
 
-        # Assert the returned list matches the expected repo names
-        self.assertEqual(result, ["repo1", "repo2", "repo3"])
+            # Test without any license filter
+            result = client.public_repos()
+            self.assertEqual(result, ["repo1", "repo2", "repo3"])  # All repositories should be returned
 
-        # Assert the mocked property was called once
-        mock_repos_url.assert_called_once()
+            # Test with a specific license filter (e.g., "mit")
+            result_with_license = client.public_repos(license="mit")
+            self.assertEqual(result_with_license, ["repo1", "repo3"])  # Only "repo1" and "repo3" should be returned
 
-        # Assert get_json was called once with the correct URL
-        mock_get_json.assert_called_once_with("https://api.github.com/orgs/google/repos")
+            # Verify that the _public_repos_url property was accessed once
+            mock_repos_url.assert_called_once()
+
+            # Verify that get_json was called once with the correct URL
+            mock_get_json.assert_called_once_with("https://api.github.com/orgs/google/repos")
