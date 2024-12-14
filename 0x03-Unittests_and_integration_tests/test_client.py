@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Unit tests for GithubOrgClient"""
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch, PropertyMock
 from parameterized import parameterized
 from client import GithubOrgClient
 
@@ -37,26 +37,21 @@ class TestGithubOrgClient(unittest.TestCase):
 
 def test_public_repos_url(self):
     """
-    Test GithubOrgClient._public_repos_url property.
-    Ensure it returns the expected repos_url from a mocked org response.
+    Testing that the result of _public_repos_url
+    is the expected one based on the mocked payload.
     """
-    mocked_org_payload = {
+    mocked_payload = {
         "repos_url": "https://api.github.com/orgs/google/repos"
     }
 
-    # Patch the org property of GithubOrgClient to return the mocked payload
     with patch.object(
         GithubOrgClient,
         "org",
         new_callable=unittest.mock.PropertyMock,
-        return_value=mocked_org_payload
+        return_value=mocked_payload
     ):
-        # Instantiate GithubOrgClient
-        client = GithubOrgClient("google")
+        cl = GithubOrgClient("google")
 
-        # Test the _public_repos_url property
-        result = client._public_repos_url
+        res = cl._public_repos_url
 
-        # Assert that _public_repos_url returns
-        # the repos_url from the mocked payload
-        self.assertEqual(result, mocked_org_payload["repos_url"])
+        self.assertEqual(res, mocked_payload["repos_url"])
