@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Unit tests for GithubOrgClient"""
 import unittest
-from unittest.mock import patch, PropertyMock
+from unittest.mock import patch, PropertyMock, MagicMock
 from parameterized import parameterized
 from client import GithubOrgClient
 
@@ -58,13 +58,13 @@ def test_public_repos_url(self):
 
 
 @patch("client.get_json")
-def test_public_repos(self, mock_get_json):
+def test_public_repos(self, mock_get_json: MagicMock):
     """Test the public_repos method of GithubOrgClient."""
 
     # Define the test payload
     test_payload = {
-        "repos_url": "https://api.github.com/orgs/google/repos",
-        "repos": [
+        'repos_url': "https://api.github.com/users/google/repos",
+        'repos': [
             {"name": "repo1", "license": {"key": "mit"}},
             {"name": "repo2", "license": {"key": "apache-2.0"}},
             {"name": "repo3", "license": {"key": "mit"}},
@@ -75,22 +75,22 @@ def test_public_repos(self, mock_get_json):
     mock_get_json.return_value = test_payload["repos"]
 
     # Mock the _public_repos_url property to return the mock URL
-    with patch("client.GithubOrgClient._public_repos_url", new_callable=PropertyMock) as mock_public_repos_url:
+    with patch(
+        "client.GithubOrgClient._public_repos_url", 
+        new_callable=PropertyMock
+    ) as mock_public_repos_url:
         mock_public_repos_url.return_value = test_payload["repos_url"]
 
-        # Create an instance of GithubOrgClient
-        client = GithubOrgClient("google")
+        # Test the method without any license filter
+        result = GithubOrgClient("google").public_repos()
+        self.assertEqual(result, ["repo1", "repo2", "repo3"])
 
-        # Test without any license filter
-        result = client.public_repos()
-        self.assertEqual(result, ["repo1", "repo2", "repo3"])  # All repositories should be returned
+        # Test the method with a specific license filter ("mit")
+        result_with_license = GithubOrgClient("google").public_repos(license="mit")
+        self.assertEqual(result_with_license, ["repo1", "repo3"])
 
-        # Test with a specific license filter (e.g., "mit")
-        result_with_license = client.public_repos(license="mit")
-        self.assertEqual(result_with_license, ["repo1", "repo3"])  # Only "repo1" and "repo3" should be returned
-
-        # Verify that the _public_repos_url property was accessed once
+        # Ensure _public_repos_url property was accessed exactly once
         mock_public_repos_url.assert_called_once()
 
-        # Verify that get_json was called once with the correct URL
+        # Ensure get_json was called exactly once with the correct URL
         mock_get_json.assert_called_once_with(test_payload["repos_url"])
