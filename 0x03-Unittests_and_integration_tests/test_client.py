@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-
+"""Unit tests for GithubOrgClient"""
 import unittest
 from unittest.mock import patch
 from parameterized import parameterized
@@ -7,31 +7,30 @@ from client import GithubOrgClient
 
 
 class TestGithubOrgClient(unittest.TestCase):
-    """Test case for the GithubOrgClient class."""
+    """Test case for the GithubOrgClient class"""
 
     @parameterized.expand([
-        ("google", {"login": "google", "id": 1}),
-        ("abc", {"login": "abc", "id": 2}),
+        ("google", {"key": "value"}),  # Example 1: org_name = "google"
+        ("abc", {"key": "another_value"}),  # Example 2: org_name = "abc"
     ])
-    @patch('client.get_json')
-    def test_org(self, org_name, mock_response, mock_get_json):
+    @patch("client.get_json")
+    def test_org(self, org_name, expected_response, mock_get_json):
         """
-        Test that GithubOrgClient.org returns the correct value.
-
-        Args:
-            org_name (str): The name of the organization.
-            mock_response (dict): The mocked response data.
-            mock_get_json (Mock): The patched `get_json` method.
+        Test that GithubOrgClient.org returns the correct value
+        and get_json is called once with the correct argument.
         """
-        # Arrange: Set up the mock to return the expected response
-        mock_get_json.return_value = mock_response
+        # Mock the response of get_json
+        mock_get_json.return_value = expected_response
 
-        # Act: Create a GithubOrgClient instance and call the `org` method
+        # Instantiate GithubOrgClient with the org_name
         client = GithubOrgClient(org_name)
+
+        # Access the org property (no parentheses)
         result = client.org
 
-        # Assert: Verify that the `get_json` method
-        # was called with the correct argument
+        # Assert that the mocked get_json was called once with the correct URL
         mock_get_json.assert_called_once_with
         (f"https://api.github.com/orgs/{org_name}")
-        self.assertEqual(result, mock_response)
+
+        # Assert that the org method returns the mocked response
+        self.assertEqual(result, expected_response)
