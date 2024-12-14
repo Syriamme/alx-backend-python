@@ -90,4 +90,5 @@ def test_public_repos(self, mock_get_json):
         mock_repos_url.assert_called_once()
 
         # Assert get_json was called once with the correct URL
-        mock_get_json.assert_called_once_with("https://api.github.com/orgs/google/repos")
+        mock_get_json.assert_called_once_with
+        ("https://api.github.com/orgs/google/repos")
