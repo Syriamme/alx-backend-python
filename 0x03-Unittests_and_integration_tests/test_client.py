@@ -65,10 +65,9 @@ def test_public_repos(self, mock_get_json):
     """
     # Mock payload to be returned by get_json
     mocked_repos_payload = [
-        {"name", "license"},
-        {"name", "license"}
+        {"name": "repo1"},
+        {"name": "repo2"},
     ]
-
     mock_get_json.return_value = mocked_repos_payload
 
     # Mock the _public_repos_url property
@@ -85,12 +84,10 @@ def test_public_repos(self, mock_get_json):
         result = client.public_repos()
 
         # Assert the returned list matches the expected repo names
-        expected_repos = [".allstar", ".github"]
-        self.assertEqual(result,  expected_repos)
+        self.assertEqual(result, ["repo1", "repo2"])
 
         # Assert the mocked property was called once
         mock_repos_url.assert_called_once()
 
         # Assert get_json was called once with the correct URL
-        mock_get_json.assert_called_once_with
-        ("https://api.github.com/orgs/google/repos")
+        mock_get_json.assert_called_once_with("https://api.github.com/orgs/google/repos")
