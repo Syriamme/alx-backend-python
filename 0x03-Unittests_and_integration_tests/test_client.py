@@ -3,7 +3,7 @@
 import unittest
 from unittest.mock import patch
 from parameterized import parameterized
-from client import GithubOrgClient 
+from client import GithubOrgClient
 
 
 class TestGithubOrgClient(unittest.TestCase):
@@ -17,7 +17,7 @@ class TestGithubOrgClient(unittest.TestCase):
     def test_org(self, org_name, mock_response, mock_get_json):
         """
         Test that GithubOrgClient.org returns the correct value.
-        
+
         Args:
             org_name (str): The name of the organization.
             mock_response (dict): The mocked response data.
@@ -30,6 +30,8 @@ class TestGithubOrgClient(unittest.TestCase):
         client = GithubOrgClient(org_name)
         result = client.org
 
-        # Assert: Verify that the `get_json` method was called with the correct argument
-        mock_get_json.assert_called_once_with(f"https://api.github.com/orgs/{org_name}")
+        # Assert: Verify that the `get_json` method
+        # was called with the correct argument
+        mock_get_json.assert_called_once_with
+        (f"https://api.github.com/orgs/{org_name}")
         self.assertEqual(result, mock_response)
