@@ -79,7 +79,9 @@ def test_public_repos(self, mock_get_json):
 
         result = client.public_repos()
 
-        self.assertEqual(result, ["repo1", "repo2"])
+        self.assertIsInstance(result, list)
+
+        self.assertEqual(result, ["repo1", "repo2", "repo3"])
 
         mocked_repos_url.assert_called_once()
 
