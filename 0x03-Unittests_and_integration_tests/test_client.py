@@ -65,10 +65,11 @@ def test_public_repos(self, mock_get_json):
     """
     # Mock payload to be returned by get_json
     mocked_repos_payload = [
-        {"name": "repo1", "license": {"key": "mit"}},
-        {"name": "repo2", "license": {"key": "apache-2.0"}},
-        {"name": "repo3", "license": {"key": "mit"}},
+        {"name": "r1", "license": {"key": "mit"}},
+        {"name": "r2", "license": {"key": "apache-2.0"}},
+        {"name": "r3", "license": {"key": "mit"}},
     ]
+
     mock_get_json.return_value = mocked_repos_payload
 
     # Mock the _public_repos_url property
