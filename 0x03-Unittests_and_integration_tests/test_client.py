@@ -75,8 +75,8 @@ def test_public_repos(self, mock_repos):
         test_client = GithubOrgClient("google")
 
         test_rep = test_client.public_repos()
-
-        self.assertEqual(mock_repos.return_value, test_rep)
+        for ix in range(3):
+            self.assertIn(mock_repos.return_value[ix]['name'], test_rep)
 
         mock_repos.assert_called_once()
 
