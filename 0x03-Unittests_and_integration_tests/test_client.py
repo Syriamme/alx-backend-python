@@ -126,8 +126,8 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
         implementing the setUpClass.
 
         """
-        mocking_requests_get = patch("requests.get")
-        clas.get_patcher = mocking_requests_get.start()
+        clas.get_patcher = patch("requests.get")
+        clas.mocking_requests_get = clas.get_patcher.start()
 
         # Defining the side effect of mocked_request_get
         def side_efct(for_url, *args, **kwargs):
@@ -137,7 +137,7 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
                 return MockResponse(clas.repos_payload)
             return MockResponse({})
 
-        clas.get_patcher.side_effect = side_efct
+        clas.mocking_requests_get.side_effect = side_efct
 
         # initilaizing the client
         clas.client = GithubOrgClient("google")
