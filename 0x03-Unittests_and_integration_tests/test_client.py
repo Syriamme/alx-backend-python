@@ -20,17 +20,17 @@ class TestGithubOrgClient(unittest.TestCase):
         ("abc",)
     ])
     @patch('client.get_json', return_value={"payload": True})
-    def test_org(self, org_name, mock_get_json):
+    def test_org(self, org_nm, mock_json):
         """
-        Test the 'org' method in GithubOrgClient.
+        Testing the 'org' method.
         
         Args:
-            org_name (str): Name of the organization to test
+            org_nm (str): Name of org being tested
         """
-        client = GithubOrgClient(org_name)
-        org_response = client.org
-        self.assertEqual(org_response, mock_get_json.return_value)
-        mock_get_json.assert_called_once()
+        test_client = GithubOrgClient(org_nm)
+        org_respo = test_client.org
+        self.assertEqual(org_respo, mock_json.return_value)
+        mock_json.assert_called_once()
 
     def test_public_repos_url(self):
         """
