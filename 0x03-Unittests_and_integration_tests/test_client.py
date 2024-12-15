@@ -42,21 +42,19 @@ def test_public_repos_url(self):
     Testing that the result of _public_repos_url
     is the expected one based on the mocked payload.
     """
-    mocked_payload = {
-        "repos_url": "https://api.github.com/orgs/google/repos"
-    }
 
     with patch.object(
         GithubOrgClient,
         "org",
-        new_callable=unittest.mock.PropertyMock,
-        return_value=mocked_payload
-    ):
+        new_callable=PropertyMock
+    )as n:
+        n.return_value = {"repos_url": "89"}
         cl = GithubOrgClient("google")
 
         res = cl._public_repos_url
 
-        self.assertEqual(res, mocked_payload["repos_url"])
+        self.assertEqual(res, n.return_value("repos_url"))
+        n.assert_called_once()
 
 
 @patch("client.get_json")
