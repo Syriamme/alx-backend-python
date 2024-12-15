@@ -56,19 +56,13 @@ def test_public_repos_url(self):
         n.assert_called_once()
 
 
-@patch('client.get_json',
-       return_value=[{'name': 'Repo1'}, {'name': 'Repo2'}, {'name': 'Repo3'}])
+@patch('client.get_json', return_value=[{'name': 'Repo1'}, {'name': 'Repo2'}, {'name': 'Repo3'}])
 def test_public_repos(self, mock_get_json):
     """
     Test the 'public_repos' method in GithubOrgClient.
     """
-    with patch.object(
-        GithubOrgClient,
-        '_public_repos_url',
-        new_callable=PropertyMock,
-        return_value="https://api.github.com/"
-    ) as mock_repos_url:
-        client = GithubOrgClient('holberton')
+    with patch.object(GithubOrgClient, '_public_repos_url', new_callable=PropertyMock, return_value="https://api.github.com/") as mock_repos_url:
+        client = GithubOrgClient('google')
         repos_list = client.public_repos()
         for repo in ['Repo1', 'Repo2', 'Repo3']:
             self.assertIn(repo, repos_list)
