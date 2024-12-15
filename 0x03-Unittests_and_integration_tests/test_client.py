@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 """Unit tests for GithubOrgClient"""
+
 import unittest
-from unittest.mock import patch, Mock, PropertyMock
-from parameterized import parameterized
-from client import GithubOrgClient
 from urllib import response
+from parameterized import parameterized, parameterized_class
+from unittest import mock
+from unittest.mock import patch, Mock, PropertyMock
+from client import GithubOrgClient
 from fixtures import TEST_PAYLOAD
 
 
