@@ -173,7 +173,24 @@ class MockResponse:
     """
 
     def __init__(self, the_json_data):
+        """
+
+        The MockResponse is
+        initialized with JSON data.
+
+        Args:
+            json_data (dict): The data that
+            will be returned by the `json` method.
+        """
         self.the_json_data = the_json_data
 
     def json(self):
+        """
+        simulating the .json method
+        to get a real response object
+
+        Returns:
+            dict: The Json data that
+            given for initilization.
+        """
         return self.the_json_data
