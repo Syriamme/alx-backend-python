@@ -49,18 +49,30 @@ class TestGithubOrgClient(unittest.TestCase):
             self.assertEqual(repos_url, result)
             mock_og.assert_called_once()
 
-    @patch('client.get_json', return_value=[{'name': 'Repo1'}, {'name': 'Repo2'}, {'name': 'Repo3'}])
-    def test_public_repos(self, mock_get_json):
+
+    @patch('client.get_json', return_value=[{'name': 'Repos1'}, {'name': 'Repos2'}, {'name': 'Repos3'}])
+    def test_public_repos(self, mock_json):
         """
-        Test the 'public_repos' method in GithubOrgClient.
+        Testing that the list of repos is
+        what you expect from the chosen payload.
+        Testing that the mocked property and
+        the mocked get_json was called once.
         """
-        with patch.object(GithubOrgClient, '_public_repos_url', new_callable=PropertyMock, return_value="https://api.github.com/") as mock_repos_url:
-            client = GithubOrgClient('holberton')
-            repos_list = client.public_repos()
-            for repo in ['Repo1', 'Repo2', 'Repo3']:
-                self.assertIn(repo, repos_list)
-            mock_get_json.assert_called_once()
-            mock_repos_url.assert_called_once()
+        with patch.object(
+            GithubOrgClient,
+            '_public_repos_url',
+            new_callable=PropertyMock,
+            return_value="https://api.github.com/") as mock_repo_url:
+
+            client = GithubOrgClient('google')
+
+            repo_list = client.public_repos()
+
+            for repo in ['Repos1', 'Repos2', 'Repos3']:
+                self.assertIn(repo, repo_list)
+
+            mock_json.assert_called_once()
+            mock_repo_url.assert_called_once()
 
     @parameterized.expand([
         ({"license": {"key": "my_license"}}, "my_license", True),
