@@ -23,7 +23,6 @@ class TestGithubOrgClient(unittest.TestCase):
     def test_org(self, org_name, mock_get_json):
         """
         Test the 'org' method in GithubOrgClient.
-        
         Args:
             org_name (str): Name of the organization to test
         """
