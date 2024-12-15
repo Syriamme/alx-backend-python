@@ -57,33 +57,27 @@ def test_public_repos_url(self):
         n.assert_called_once()
 
 
-@patch("client.get_json")
-def test_public_repos(self, mock_get_json):
+@patch("client.get_json", return_value=[{'name': '.allstar'},
+                                            {'name': '.github'},
+                                            {'name': 'abpackage'}])
+def test_public_repos(self, mock_repos):
     """
     Testing that the list of repos is what you expect from the chosen payload.
     Testing that the mocked property and the mocked get_json was called once.
     """
-    mocked_payload = [
-        {"name": "repo1", "license": {"key": "mit"}},
-        {"name": "repo2", "license": {"key": "apache-2.0"}},
-        {"name": "repo3", "license": {"key": "mit"}},
-    ]
-    mock_get_json.return_value = mocked_payload
 
     with patch.object(
         GithubOrgClient,
         "_public_repos_url",
-        new_callable=unittest.mock.PropertyMock,
-        return_value="https://api.github.com/orgs/google/repos"
-    ) as mocked_repos_url:
-        client = GithubOrgClient("google")
+        new_callable=PropertyMock,
+        return_value="https://api.github.com/users/google/repos"
+    ) as m:
+        test_client = GithubOrgClient("google")
 
-        result = client.public_repos()
+        test_rep = test_client.public_repos()
 
-        self.assertEqual(result, ["repo1", "repo2", "repo3"])
+        self.assertEqual(mock_repos.return_value, test_rep)
 
-        mocked_repos_url.assert_called_once()
+        mock_repos.assert_called_once()
 
-        mock_get_json.assert_called_once_with(
-            "https://api.github.com/orgs/google/repos"
-        )
+        m.assert_called_once_with()
