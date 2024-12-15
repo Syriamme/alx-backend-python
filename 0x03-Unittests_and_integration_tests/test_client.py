@@ -104,45 +104,54 @@ class TestGithubOrgClient(unittest.TestCase):
     ("org_payload", "repos_payload", "expected_repos", "apache2_repos"),
     [
         (
-            TEST_PAYLOAD[0]["org_payload"],
-            TEST_PAYLOAD[0]["repos_payload"],
-            TEST_PAYLOAD[0]["expected_repos"],
-            TEST_PAYLOAD[0]["apache2_repos"],
+            TEST_PAYLOAD[0][0],
+            TEST_PAYLOAD[0][1],
+            TEST_PAYLOAD[0][2],
+            TEST_PAYLOAD[0][3],
         )
     ],
 )
 class TestIntegrationGithubOrgClient(unittest.TestCase):
     """
-    Integration test for the GithubOrgClient.public_repos method.
+
+    test the GithubOrgClient.public_repos method
+    in an integration test.
+
     """
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(clas):
         """
-        Set up class method to mock requests.get and provide payloads.
+
+        implementing the setUpClass.
+
         """
-        def side_effect(url):
-            if url == "https://api.github.com/orgs/google":
-                return cls.org_payload
-            elif url == cls.org_payload["repos_url"]:
-                return cls.repos_payload
-            return {}
+        mocking_requests_get = patch("requests.get")
+        clas.get_patcher = mocking_requests_get.start()
 
-        cls.get_patcher = patch("requests.get", side_effect=lambda url: MockResponse(side_effect(url)))
-        cls.get_patcher.start()
+        # Defining the side effect of mocked_request_get
+        def side_efct(for_url, *args, **kwargs):
+            if for_url == "https://api.github.com/orgs/google":
+                return MockResponse(clas.org_payload)
+            elif for_url == clas.org_payload["repos_url"]:
+                return MockResponse(clas.repos_payload)
+            return MockResponse({})
 
-        cls.client = GithubOrgClient("google")
+        clas.get_patcher.side_effect = side_efct
+
+        # initilaizing the client
+        clas.client = GithubOrgClient("google")
 
     @classmethod
-    def tearDownClass(cls):
+    def tearDownClass(clas):
         """
-        Tear down class method to stop the patcher.
+        implementing the tear down class.
         """
-        cls.get_patcher.stop()
+        clas.get_patcher.stop()
 
     def test_public_repos(self):
         """
-        Test public_repos method without filtering by license.
+        Testing public_repos without filtering through license.
         """
         self.assertEqual(self.client.public_repos(), self.expected_repos)
 
@@ -157,11 +166,14 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
 
 class MockResponse:
     """
-    Mock response for requests.get.
+
+    Mocking the response
+    to match the behavior of requests.get.
+
     """
 
-    def __init__(self, json_data):
-        self.json_data = json_data
+    def __init__(self, the_json_data):
+        self.the_json_data = the_json_data
 
     def json(self):
-        return self.json_data
+        return self.the_json_data
