@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 """Unit tests for GithubOrgClient"""
-import unittest
-from unittest.mock import patch, PropertyMock
+import unittest 
+from unittest.mock import patch, Mock, PropertyMock
 from parameterized import parameterized
 from client import GithubOrgClient
+from urllib import response
+from fixtures import TEST_PAYLOAD
 
 
 class TestGithubOrgClient(unittest.TestCase):
@@ -12,27 +14,27 @@ class TestGithubOrgClient(unittest.TestCase):
     """
 
     @parameterized.expand([
-        ("google", {"login": "value"}),
-        ("abc", {"login": "value"}),
+        ("google"),
+        ("abc")
     ])
     @patch(
         "client.get_json",
+        return_value={"payload": True}
     )
-    def test_org(self, org, response, mocked_get_json):
+    def test_org(self, org, mocked_org):
         """
         Testing if GithubOrgClient.org will return correct value
 
         get_json will be called once with the correct arg.
+        Args:
+            org(str): name of the organization
         """
+        org_client = GithubOrgClient(org)
 
-        mocked_get_json.return_value = response
-        client = GithubOrgClient(org)
-        result = client.org
+        response = org_client.org
 
-        mocked_get_json.assert_called_once_with
-        (f"https://api.github.com/orgs/{org}")
-
-        self.assertEqual(result, response)
+        self.assertEqual(response, mocked_org.return_value)
+        mocked_org.assert_called_once()
 
 
 def test_public_repos_url(self):
