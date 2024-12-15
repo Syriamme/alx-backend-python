@@ -76,9 +76,13 @@ def test_public_repos(self, mock_get_json):
           client = GithubOrgClient("google")
           
           result = client.public_repos()
+          self.assertIsInstance(result, list)
+
           self.assertEqual(result, ["repo1", "repo2", "repo3"])
           mock_repos_url.assert_called_once()
           
           mock_get_json.assert_called_once_with(
               "https://api.github.com/orgs/google/repos"
             )
+if __name__ == '__main__':
+    unittest.main()
