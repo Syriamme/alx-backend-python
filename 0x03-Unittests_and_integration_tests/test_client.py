@@ -23,7 +23,6 @@ class TestGithubOrgClient(unittest.TestCase):
     def test_org(self, org_nm, mock_json):
         """
         Testing the 'org' method.
-        
         Args:
             org_nm (str): Name of org being tested
         """
@@ -37,8 +36,13 @@ class TestGithubOrgClient(unittest.TestCase):
         est that the result of _public_repos_url
         is the expected one based on the mocked payload.
         """
-        with patch.object(GithubOrgClient, 'org', new_callable=PropertyMock) as mock_og:
-            mock_og.return_value = {"repos_url": "https://api.github.com/users/google/repos"}
+        with patch.object(
+            GithubOrgClient,
+            'org',
+            new_callable=PropertyMock) as mock_og:
+            mock_og.return_value = {
+                "repos_url": "https://api.github.com/users/google/repos"
+            }
 
             client = GithubOrgClient('google')
 
