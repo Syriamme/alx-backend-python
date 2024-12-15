@@ -67,9 +67,8 @@ class TestGithubOrgClient(unittest.TestCase):
             client = GithubOrgClient('google')
 
             repo_list = client.public_repos()
-
-            for repo in ['Repos1', 'Repos2', 'Repos3']:
-                self.assertIn(repo, repo_list)
+            
+            self.assertCountEqual(repo_list, ['Repos1', 'Repos2', 'Repos3'])
 
             mock_json.assert_called_once()
             mock_repo_url.assert_called_once()
