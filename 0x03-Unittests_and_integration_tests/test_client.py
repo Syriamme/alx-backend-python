@@ -50,7 +50,7 @@ class TestGithubOrgClient(unittest.TestCase):
             mock_og.assert_called_once()
 
 
-    @patch('client.get_json', return_value=[{'name': 'Repos1'}, {'name': 'Repos2'}, {'name': 'Repos3'}])
+    @patch('client.get_json')
     def test_public_repos(self, mock_json):
         """
         Testing that the list of repos is
@@ -58,6 +58,11 @@ class TestGithubOrgClient(unittest.TestCase):
         Testing that the mocked property and
         the mocked get_json was called once.
         """
+        mock_json.return_value = [
+            {'name': 'Repos1'},
+            {'name': 'Repos2'},
+            {'name': 'Repos3'}
+        ]
         with patch.object(
             GithubOrgClient,
             '_public_repos_url',
