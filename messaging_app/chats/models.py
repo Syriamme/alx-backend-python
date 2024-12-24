@@ -1,6 +1,7 @@
 from django.db import models
 import uuid
 from django.contrib.auth.models import AbstractUser, Group, Permission
+from django.contrib.auth.hashers import make_password, check_password
 
 class User(AbstractUser):
     user_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -15,6 +16,8 @@ class User(AbstractUser):
     created_at = models.DateTimeField(auto_now_add=True)
 
     email = models.EmailField('email address', unique=True)
+
+    password = models.CharField(max_length=255, null=False)
 
     USERNAME_FIELD = 'email'
 
@@ -44,6 +47,12 @@ class Conversation(models.Model):
     def __str__(self):
         participants_names = ", ".join([user.email for user in self.participants.all()])
         return f"Conversation between: {participants_names}"
+    
+    def setting_password(self, raw_pass):
+        self.password = make_password(raw_pass)
+    
+    def checking_pass(self, raw_pass):
+        return check_password(raw_pass, self.password)
 
 class Message(models.Model):
     message_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
