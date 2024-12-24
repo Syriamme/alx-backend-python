@@ -36,6 +36,12 @@ class User(AbstractUser):
 
     def __str__(self):
         return f"{self.first_name} {self.last_name} ({self.email})"
+    
+    def get_full_name(self):
+        """
+        getting the user full names
+        """
+        return f"{self.first_name} {self.last_name}"
 
 class Conversation(models.Model):
     conversation_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -49,9 +55,15 @@ class Conversation(models.Model):
         return f"Conversation between: {participants_names}"
     
     def setting_password(self, raw_pass):
+        """
+        hashing the password
+        """
         self.password = make_password(raw_pass)
     
     def checking_pass(self, raw_pass):
+        """
+        Validating the password
+        """
         return check_password(raw_pass, self.password)
 
 class Message(models.Model):

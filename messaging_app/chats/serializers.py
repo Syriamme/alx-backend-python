@@ -25,7 +25,10 @@ class UserSerializer(serializers.ModelSerializer):
 #Message serializer for the message model
 class MessageSerializer(serializers.ModelSerializers):
     sender = serializers.SerializerMethodField()
-    Conversation_id = serializers.PrimarykeyRelatedField(queryset=Conversation.objects.all())
+    Conversation_id = serializers.PrimaryKeyRelatedField(
+        queryset=Conversation.objects.all()
+    )
+
 
     def the_sender(self, obj):
         """
@@ -48,7 +51,7 @@ class MessageSerializer(serializers.ModelSerializers):
         ]
 
 class ConversationSerializer(serializers.ModelSerializer):
-    participants = UserSerializer(many=True, read_only=True)
+    participants = serializers.SerializerMethodField()
     messages = MessageSerializer(many=True, read_only=True)
 
     def the_participants(self, obj):
