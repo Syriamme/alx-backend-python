@@ -9,6 +9,9 @@ from .serializers import ConversationSerializer, MessageSerializer
 class ConversationViewSet(viewsets.ModelviewSet):
     queryset = Conversation.objects.all()
     serializer_class = ConversationSerializer
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['participants__first_name', 'participants__last_name', 'participants__email']
+    ordering_fields = ['created_at']
 
     def create(self, request, *arg, **kwargz):
         """
@@ -22,6 +25,8 @@ class ConversationViewSet(viewsets.ModelviewSet):
 class MessageViewSet(viewsets.ModelViewSet):
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['message_body', 'sender__first_name', 'sender__last_name']
 
     def list(self, request, *argz, **kwargz):
         """
