@@ -23,7 +23,7 @@ class UserSerializer(serializers.ModelSerializer):
         ]
 
 #Message serializer for the message model
-class MessageSerializer(serializers.ModelSerializers):
+class MessageSerializer(serializers.ModelSerializer):
     sender = serializers.SerializerMethodField()
     Conversation_id = serializers.PrimaryKeyRelatedField(
         queryset=Conversation.objects.all()

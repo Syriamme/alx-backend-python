@@ -1,23 +1,23 @@
-from django.shortcuts import render, get_object_or_404
-
-from rest_framework import viewsets, status
+from rest_framework import viewsets
+from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.response import Response
-from rest_framework.decorators import action
+from rest_framework import status
 from .models import Conversation, Message
 from .serializers import ConversationSerializer, MessageSerializer
+from django.shortcuts import get_object_or_404
 
-class ConversationViewSet(viewsets.ModelviewSet):
+class ConversationViewSet(viewsets.ModelViewSet):
     queryset = Conversation.objects.all()
     serializer_class = ConversationSerializer
-    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    filter_backends = [SearchFilter, OrderingFilter]
     search_fields = ['participants__first_name', 'participants__last_name', 'participants__email']
     ordering_fields = ['created_at']
 
-    def create(self, request, *arg, **kwargz):
+    def create(self, request, *args, **kwargs):
         """
-        creation of a new conversation
+        Creation of a new conversation
         """
-        serializer =  self.get_serializer(data=request.data)
+        serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         conversation = serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -25,8 +25,10 @@ class ConversationViewSet(viewsets.ModelviewSet):
 class MessageViewSet(viewsets.ModelViewSet):
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
-    filter_backends = [filters.SearchFilter]
+    filter_backends = [SearchFilter, OrderingFilter]
     search_fields = ['message_body', 'sender__first_name', 'sender__last_name']
+    ordering_fields = ['created_at']
+
 
     def list(self, request, *argz, **kwargz):
         """
