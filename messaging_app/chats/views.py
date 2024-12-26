@@ -5,6 +5,8 @@ from rest_framework import status
 from .models import Conversation, Message
 from .serializers import ConversationSerializer, MessageSerializer
 from django.shortcuts import get_object_or_404
+from .permissions import IsParticipant
+
 
 class ConversationViewSet(viewsets.ModelViewSet):
     queryset = Conversation.objects.all()
@@ -12,6 +14,8 @@ class ConversationViewSet(viewsets.ModelViewSet):
     filter_backends = [SearchFilter, OrderingFilter]
     search_fields = ['participants__first_name', 'participants__last_name', 'participants__email']
     ordering_fields = ['created_at']
+    permission_classes = [IsParticipant]
+
 
     def create(self, request, *args, **kwargs):
         """
@@ -28,6 +32,8 @@ class MessageViewSet(viewsets.ModelViewSet):
     filter_backends = [SearchFilter, OrderingFilter]
     search_fields = ['message_body', 'sender__first_name', 'sender__last_name']
     ordering_fields = ['created_at']
+    permission_classes = [IsParticipant]
+
 
 
     def list(self, request, *argz, **kwargz):
