@@ -6,10 +6,10 @@ from .models import Conversation, Message
 from .serializers import ConversationSerializer, MessageSerializer
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
-
+from .permissions import IsParticipantOfConversation
 
 class ConversationViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsParticipantOfConversation]
     queryset = Conversation.objects.all()
     serializer_class = ConversationSerializer
     filter_backends = [SearchFilter, OrderingFilter]
@@ -32,9 +32,7 @@ class MessageViewSet(viewsets.ModelViewSet):
     filter_backends = [SearchFilter, OrderingFilter]
     search_fields = ['message_body', 'sender__first_name', 'sender__last_name']
     ordering_fields = ['created_at']
-    permission_classes = [IsAuthenticated]
-
-
+    permission_classes = [IsAuthenticated, IsParticipantOfConversation]
 
     def list(self, request, *argz, **kwargz):
         """
