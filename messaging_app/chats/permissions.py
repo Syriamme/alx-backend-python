@@ -1,9 +1,9 @@
 from rest_framework.permissions import BasePermission
 
-class IsParticipant(BasePermission):
+class IsOwnerOrReadOnly(BasePermission):
     """
-    Custom permission to allow access only
-    if the user is part of the conversation.
+    Custom permission to allow
+    users to access their own messages only.
     """
 
     def has_object_permission(self, request, view, obj):
