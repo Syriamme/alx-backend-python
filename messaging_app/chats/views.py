@@ -7,6 +7,9 @@ from .serializers import ConversationSerializer, MessageSerializer
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from .permissions import IsParticipantOfConversation
+from django_filters.rest_framework import DjangoFilterBackend
+from .filters import MessageFilter
+
 
 class ConversationViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, IsParticipantOfConversation]
@@ -15,7 +18,6 @@ class ConversationViewSet(viewsets.ModelViewSet):
     filter_backends = [SearchFilter, OrderingFilter]
     search_fields = ['participants__first_name', 'participants__last_name', 'participants__email']
     ordering_fields = ['created_at']
-
 
     def create(self, request, *args, **kwargs):
         """
@@ -33,7 +35,22 @@ class MessageViewSet(viewsets.ModelViewSet):
     search_fields = ['message_body', 'sender__first_name', 'sender__last_name']
     ordering_fields = ['created_at']
     permission_classes = [IsAuthenticated, IsParticipantOfConversation]
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = MessageFilter
 
+    def get_queryset(self):
+        """
+        Restrict queryset to conversations
+        where the user is a participant
+        """
+        return Message.objects.filter(conversation__participants=self.request.user)
+
+    def perform_create(self, serializer):
+        """Automatically setting
+        the sender as the logged-in user
+        """
+        serializer.save(sender=self.request.use)
+        
     def list(self, request, *argz, **kwargz):
         """
         Listing the messages for each conversation
