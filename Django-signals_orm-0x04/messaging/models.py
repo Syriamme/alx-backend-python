@@ -1,13 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+from messaging.managers import UnreadMessagesManager
 
-class UnreadMessagesManager(models.Manager):
-    """
-    Custom manager to filter
-    unread messages for a user.
-    """
-    def unread_for_user(self, user):
-        return self.filter(receiver=user, read=False)
 class Message(models.Model):
     sender = models.ForeignKey(
         User,
