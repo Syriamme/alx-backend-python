@@ -28,13 +28,13 @@ def delete_user(request):
 @login_required
 def unread_messages(request):
     """
-    Display unread messages for the
-    currently logged-in user as a JSON response.
+    Display unread messages for
+    the currently logged-in user.
     """
     user = request.user
-    unread_msgs = Message.unread.unread_for_user(user)
+    unread_msgs = Message.unread.unread_for_user(user).only('sender', 'content', 'timestamp')
 
-    messages_data = [
+    unread_msgs_list = [
         {
             'sender': msg.sender.username,
             'content': msg.content,
@@ -42,9 +42,8 @@ def unread_messages(request):
         }
         for msg in unread_msgs
     ]
-
-    # Return the messages as a JSON response
-    return JsonResponse({'unread_messages': messages_data})
+    
+    return JsonResponse({'unread_messages': unread_msgs_list})
 
 def fetch_threaded_conversation(request, message_id):
     """
