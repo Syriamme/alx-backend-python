@@ -1,6 +1,8 @@
 from django.db.models.signals import post_save, pre_save, post_delete
 from django.dispatch import receiver
 from .models import Message, Notification, MessageHistory
+from django.contrib.auth.models import User
+
 
 @receiver(post_save, sender=Message)
 def create_notification(sender, instance, created, **kwargs):
@@ -32,14 +34,16 @@ def log_edit_message(sender, instance, **kwargs):
             pass
 
 @receiver(post_delete, sender=User)
-def cleanup_user_data(sender, instance, **kwargs):
+def delete_related_data(sender, instance, **kwargs):
     """
-    Custom cleaning up logic for user-related data
-    when a User is deleted.
+    Signal to delete all messages, notifications,
+    and message histories
+    associated with a user when the user is deleted.
     """
-    # Clean up notifications (if not using CASCADE)
+    Message.objects.filter(sender=instance).delete()
+    Message.objects.filter(receiver=instance).delete()
+
     Notification.objects.filter(user=instance).delete()
 
-    # Clean up message history explicitly
     MessageHistory.objects.filter(message__sender=instance).delete()
     MessageHistory.objects.filter(message__receiver=instance).delete()
