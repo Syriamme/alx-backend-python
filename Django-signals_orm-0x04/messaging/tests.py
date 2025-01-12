@@ -59,3 +59,16 @@ class UserDeletionTest(TestCase):
         self.assertFalse(Message.objects.filter(sender=self.user1).exists())
         self.assertFalse(Notification.objects.filter(user=self.user1).exists())
         self.assertFalse(MessageHistory.objects.filter(message__sender=self.user1).exists())
+
+class ThreadedConversationTest(TestCase):
+    def setUp(self):
+        self.user1 = User.objects.create_user(username="user1", password="password")
+        self.user2 = User.objects.create_user(username="user2", password="password")
+        self.message1 = Message.objects.create(sender=self.user1, receiver=self.user2, content="Hello!")
+        self.reply1 = Message.objects.create(sender=self.user2, receiver=self.user1, content="Hi!", parent_message=self.message1)
+        self.reply2 = Message.objects.create(sender=self.user1, receiver=self.user2, content="How are you?", parent_message=self.reply1)
+
+    def test_threaded_conversation(self):
+        self.assertEqual(self.message1.replies.count(), 1)
+        self.assertEqual(self.reply1.replies.count(), 1)
+        self.assertEqual(self.reply2.parent_message, self.reply1)

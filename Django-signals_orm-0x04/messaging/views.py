@@ -1,7 +1,9 @@
 from django.contrib.auth.models import User
-from django.shortcuts import JsonResponse
+from django.shortcuts import JsonResponse, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
+
+from messaging.models import Message
 
 @login_required
 def delete_user(request):
@@ -22,3 +24,31 @@ def delete_user(request):
         except Exception as e:
             return JsonResponse({"error": f"An error occurred: {str(e)}"}, status=500)
     return JsonResponse({"error": "Invalid request method"}, status=400)
+
+
+def fetch_threaded_conversation(request, message_id):
+    """
+    Fetch a message
+    and its threaded replies recursively as JSON.
+    """
+    message = get_object_or_404(
+        Message.objects.select_related('sender', 'receiver').prefetch_related('replies'),
+        id=message_id
+    )
+
+    def get_replies(message):
+        """
+        Recursively fetch all replies to a message and structure them as a dictionary.
+        """
+        return {
+            "id": message.id,
+            "sender": message.sender.username,
+            "receiver": message.receiver.username,
+            "content": message.content,
+            "timestamp": message.timestamp.isoformat(),
+            "replies": [get_replies(reply) for reply in message.replies.all()]
+        }
+
+    conversation = get_replies(message)
+
+    return JsonResponse({"conversation": conversation})

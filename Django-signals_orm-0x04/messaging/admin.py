@@ -10,3 +10,10 @@ class MessageAdmin(admin.ModelAdmin):
 class NotificationAdmin(admin.ModelAdmin):
     list_display = ('user', 'message', 'is_read', 'timestamp')
     search_fields = ('user__username', 'message__content')
+
+class MessageAdmin(admin.ModelAdmin):
+    list_display = ('id', 'sender', 'receiver', 'content', 'timestamp', 'parent_message')
+    list_filter = ('sender', 'receiver', 'timestamp')
+    search_fields = ('content',)
+
+admin.site.register(Message, MessageAdmin)
