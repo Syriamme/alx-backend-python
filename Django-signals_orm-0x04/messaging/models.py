@@ -1,6 +1,13 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+class UnreadMessagesManager(models.Manager):
+    """
+    Custom manager to filter
+    unread messages for a user.
+    """
+    def unread_for_user(self, user):
+        return self.filter(receiver=user, read=False)
 class Message(models.Model):
     sender = models.ForeignKey(
         User,
@@ -13,6 +20,7 @@ class Message(models.Model):
         related_name='received_messages'
     )
     content = models.TextField()
+    read = models.BooleanField(default=False)
     timestamp = models.DateTimeField(auto_now_add=True)
     edited = models.BooleanField(default=False)
     edited_at = models.DateTimeField(null=True, blank=True) 
@@ -29,6 +37,10 @@ class Message(models.Model):
         related_name="replies",
         on_delete=models.CASCADE
     )
+    
+    # Custom manager to filter unread messages
+    objects = models.Manager()
+    unread = UnreadMessagesManager()
 
     def __str__(self):
         return f"Message from {self.sender.username} to {self.receiver.username} at {self.timestamp}"

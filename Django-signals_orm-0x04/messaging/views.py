@@ -25,6 +25,26 @@ def delete_user(request):
             return JsonResponse({"error": f"An error occurred: {str(e)}"}, status=500)
     return JsonResponse({"error": "Invalid request method"}, status=400)
 
+@login_required
+def unread_messages(request):
+    """
+    Display unread messages for the
+    currently logged-in user as a JSON response.
+    """
+    user = request.user
+    unread_msgs = Message.unread.unread_for_user(user)
+
+    messages_data = [
+        {
+            'sender': msg.sender.username,
+            'content': msg.content,
+            'timestamp': msg.timestamp.strftime('%Y-%m-%d %H:%M:%S'),
+        }
+        for msg in unread_msgs
+    ]
+
+    # Return the messages as a JSON response
+    return JsonResponse({'unread_messages': messages_data})
 
 def fetch_threaded_conversation(request, message_id):
     """
