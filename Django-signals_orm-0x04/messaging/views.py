@@ -43,13 +43,14 @@ def fetch_threaded_conversation(request, message_id):
         Recursively fetch all replies to a message 
         and structure them as a dictionary.
         """
+        replies = Message.objects.filter(parent_message=message).select_related('sender', 'receiver')
         return {
             "id": message.id,
             "sender": message.sender.username,
             "receiver": message.receiver.username,
             "content": message.content,
             "timestamp": message.timestamp.isoformat(),
-            "replies": [get_replies(reply) for reply in message.replies.all()]
+            "replies": [get_replies(reply) for reply in replies]
         }
 
     conversation = get_replies(message)
