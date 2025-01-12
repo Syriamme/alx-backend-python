@@ -1,8 +1,8 @@
 from django.contrib.auth.models import User
 from django.shortcuts import JsonResponse, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import cache_page
 from django.core.exceptions import ObjectDoesNotExist
-
 from messaging.models import Message
 
 @login_required
@@ -75,3 +75,25 @@ def fetch_threaded_conversation(request, message_id):
     conversation = get_replies(message)
 
     return JsonResponse({"conversation": conversation})
+
+@login_required
+@cache_page(60)
+def conversation_view(request, conversation_id):
+    """
+    Display messages in a specific conversation
+    and cache the view for 60 seconds.
+    Returns the messages in JSON format.
+    """
+    user = request.user
+    messages = Message.objects.filter(conversation_id=conversation_id).only('sender', 'content', 'timestamp')
+
+    messages_data = [
+        {
+            'sender': message.sender.username,
+            'content': message.content,
+            'timestamp': message.timestamp.isoformat(),
+        }
+        for message in messages
+    ]
+
+    return JsonResponse({'messages': messages_data})
