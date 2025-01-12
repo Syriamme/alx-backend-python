@@ -1,4 +1,4 @@
-from django.db.models.signals import post_save, pre_save
+from django.db.models.signals import post_save, pre_save, post_delete
 from django.dispatch import receiver
 from .models import Message, Notification, MessageHistory
 
@@ -30,3 +30,16 @@ def log_edit_message(sender, instance, **kwargs):
                 instance.edited = True
         except Message.DoesNotExist:
             pass
+
+@receiver(post_delete, sender=User)
+def cleanup_user_data(sender, instance, **kwargs):
+    """
+    Custom cleaning up logic for user-related data
+    when a User is deleted.
+    """
+    # Clean up notifications (if not using CASCADE)
+    Notification.objects.filter(user=instance).delete()
+
+    # Clean up message history explicitly
+    MessageHistory.objects.filter(message__sender=instance).delete()
+    MessageHistory.objects.filter(message__receiver=instance).delete()
