@@ -32,13 +32,16 @@ def fetch_threaded_conversation(request, message_id):
     and its threaded replies recursively as JSON.
     """
     message = get_object_or_404(
-        Message.objects.select_related('sender', 'receiver').prefetch_related('replies'),
-        id=message_id
+        Message.objects.select_related('sender', 'receiver')
+        .prefetch_related('replies'),
+        id=message_id,
+        sender=request.user
     )
 
     def get_replies(message):
         """
-        Recursively fetch all replies to a message and structure them as a dictionary.
+        Recursively fetch all replies to a message 
+        and structure them as a dictionary.
         """
         return {
             "id": message.id,
