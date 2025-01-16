@@ -154,3 +154,22 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CSRF_COOKIE_HTTPONLY = False
 
 AUTH_USER_MODEL = 'chats.User'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': 'requests.log',
+        },
+    },
+    'loggers': {
+        'request_logger': {
+            'handlers': ['file'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    },
+}
