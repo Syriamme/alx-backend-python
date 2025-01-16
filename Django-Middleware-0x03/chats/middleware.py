@@ -82,3 +82,29 @@ class OffensiveLanguageMiddleware:
         # Process the request as usual
         response = self.get_response(request)
         return response
+class RolePermissionMiddleware:
+    def __init__(self, get_response):
+        """
+        Initializes the middleware. This stores the get_response callable.
+        """
+        self.get_response = get_response
+
+    def __call__(self, request):
+        """
+        Middleware logic to check if the user has the appropriate role.
+        Only users with 'admin' or 'moderator' roles are allowed to proceed.
+        """
+        # Check if the user is authenticated and has the required role
+        if request.user.is_authenticated:
+            user_roles = request.user.groups.values_list('name', flat=True)  # Retrieve user roles
+            
+            # If the user is neither an admin nor a moderator, deny access with 403
+            if not any(role in user_roles for role in ['admin', 'moderator']):
+                return HttpResponseForbidden("You do not have permission to perform this action.")
+        else:
+            # If the user is not authenticated, deny access
+            return HttpResponseForbidden("You need to be logged in to perform this action.")
+
+        # If the user has the correct role or is authenticated, process the request
+        response = self.get_response(request)
+        return response
