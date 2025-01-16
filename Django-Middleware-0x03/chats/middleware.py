@@ -8,25 +8,24 @@ from django.http import JsonResponse
 
 class RequestLoggingMiddleware:
     def __init__(self, get_response):
+        """
+        Middleware initialization, receives the get_response callable.
+        """
         self.get_response = get_response
-        
-        #setting up the logger
-        self.logger = logging.getLogger('django.request')
-        handler = logging.FileHandler('user_requests.log')
-        formatter = logging.Formatter('%(message)s')
-        handler.setFormatter(formatter)
-        self.logger.addHandler(handler)
-        self.logger.setLevel(logging.INFO)
 
-    
     def __call__(self, request):
         """
-        logging the request details
+        Logs the user's request with timestamp, user, and request path.
         """
-        user =  request.user if request.user.is_authenticated else "Unknown"
-        logging_message = f"{datetime.datetimenow()} - user: {user} - Path: {request.path}"
-        self.logger.info(logging_message)
-
+        user = request.user.username if request.user.is_authenticated else 'Anonymous'
+        path = request.path
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        
+        # Log to file
+        logger = logging.getLogger('request_logger')
+        logger.info(f"{timestamp} - User: {user} - Path: {path}")
+        
+        # Call the next middleware or view
         response = self.get_response(request)
         return response
 
