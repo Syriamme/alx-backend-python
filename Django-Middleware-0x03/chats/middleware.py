@@ -46,6 +46,7 @@ class RestrictAccessByTimeMiddleware:
         # If it's within allowed hours, process the request normally
         response = self.get_response(request)
         return response
+
 class OffensiveLanguageMiddleware:
     def __init__(self, get_response):
         """
@@ -82,6 +83,7 @@ class OffensiveLanguageMiddleware:
         # Process the request as usual
         response = self.get_response(request)
         return response
+
 
 class RolePermissionMiddleware:
     def __init__(self, get_response):
