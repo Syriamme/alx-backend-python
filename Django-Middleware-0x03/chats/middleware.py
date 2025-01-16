@@ -1,7 +1,6 @@
-# chats/middleware.py
-
 import logging
 from datetime import datetime
+from django.http import HttpResponseForbidden
 
 class RequestLoggingMiddleware:
     def __init__(self, get_response):
@@ -23,5 +22,25 @@ class RequestLoggingMiddleware:
         logger.info(f"{timestamp} - User: {user} - Path: {path}")
         
         # Call the next middleware or view
+        response = self.get_response(request)
+        return response
+class RestrictAccessByTimeMiddleware:
+    def __init__(self, get_response):
+        """
+        Initialize the middleware.
+        """
+        self.get_response = get_response
+
+    def __call__(self, request):
+        """
+        Restrict access to the messaging app outside the hours of 9 AM to 6 PM.
+        """
+        current_time = datetime.now().hour  # Get the current hour (24-hour format)
+        
+        if current_time < 9 or current_time >= 18:
+            # If it's before 9 AM or after 6 PM, deny access with a 403 Forbidden error
+            return HttpResponseForbidden("Access to the messaging app is restricted outside of 9 AM to 6 PM.")
+        
+        # If it's within allowed hours, process the request normally
         response = self.get_response(request)
         return response
