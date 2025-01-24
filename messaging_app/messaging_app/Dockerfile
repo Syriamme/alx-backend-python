@@ -1,20 +1,18 @@
-# Step 1: Use Python 3.10 as the base image
+# Step 1: Use a base Python image
 FROM python:3.10
 
-# Step 2: Set the working directory in the container
+# Step 2: Set the working directory inside the container
 WORKDIR /app
 
-# Step 3: Copy requirements.txt into the container
+# Step 3: Copy the requirements file and install dependencies
 COPY requirements.txt /app/
-
-# Step 4: Install the dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Step 5: Copy the entire Django project into the container
+# Step 4: Copy the Django project into the container
 COPY . /app/
 
-# Step 6: Expose the port the app will run on
+# Step 5: Expose port 8000
 EXPOSE 8000
 
-# Step 7: Set the default command to run the app
+# Step 6: Set the command to run the Django app
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
