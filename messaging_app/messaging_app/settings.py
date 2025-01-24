@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'rest_framework',
     'chats',
+    'messaging_app'
 ]
 
 INSTALLED_APPS += [
