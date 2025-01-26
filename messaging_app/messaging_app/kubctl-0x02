@@ -1,0 +1,43 @@
+#!/bin/bash
+
+# kubctl-0x02: Script to perform a Blue-Green Deployment Strategy
+
+NAMESPACE="default"
+
+# Apply the blue deployment
+echo "Deploying the blue version..."
+kubectl apply -f blue_deployment.yaml --namespace=$NAMESPACE
+if [ $? -ne 0 ]; then
+    echo "Failed to deploy the blue version. Exiting."
+    exit 1
+fi
+
+# Wait for the blue deployment to stabilize
+echo "Waiting for the blue deployment to stabilize..."
+kubectl rollout status deployment/django-app-blue --namespace=$NAMESPACE
+
+# Apply the green deployment
+echo "Deploying the green version..."
+kubectl apply -f green_deployment.yaml --namespace=$NAMESPACE
+if [ $? -ne 0 ]; then
+    echo "Failed to deploy the green version. Exiting."
+    exit 1
+fi
+
+# Wait for the green deployment to stabilize
+echo "Waiting for the green deployment to stabilize..."
+kubectl rollout status deployment/django-app-green --namespace=$NAMESPACE
+
+# Verify the pods of both blue and green versions
+echo "Checking pods of both deployments..."
+kubectl get pods --namespace=$NAMESPACE -l app=django-app
+
+# Monitor logs for both versions
+echo "Checking logs for the blue deployment..."
+kubectl logs -l app=django-app,version=blue --namespace=$NAMESPACE
+
+echo "Checking logs for the green deployment..."
+kubectl logs -l app=django-app,version=green --namespace=$NAMESPACE
+
+echo "Blue-Green deployment complete!"
+exit 0
