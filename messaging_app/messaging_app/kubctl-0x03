@@ -1,22 +1,29 @@
 #!/bin/bash
 
-# Apply the updated blue deployment (version 2.0)
+# Apply the updated blue deployment (version 2.0) to trigger the rolling update
 echo "Applying the updated Blue deployment (version 2.0)..."
 kubectl apply -f blue_deployment.yaml
 
-# Monitor the rolling update status
+# Monitor the rolling update progress using kubectl rollout status
 echo "Monitoring the rolling update status..."
 kubectl rollout status deployment/django-app-blue
 
-# Use curl to test the application during the update (simulating traffic)
+# Check the current pods to verify the rolling update status
+echo "Verifying the rolling update by checking current pods..."
+kubectl get pods
+
+# Use curl to test if the app experiences any downtime or disruption
+# We'll simulate traffic by continuously sending requests to the app
 echo "Testing for downtime or disruption using curl..."
+
+# Loop to send requests and check if the app is up
 while true
 do
-  response=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8000) # Assuming the app is accessible at localhost:8000
+  response=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8000)  # Replace with the correct URL if different
   if [ "$response" -eq 200 ]; then
     echo "App is responsive (HTTP status code: $response)"
   else
     echo "App is not responsive (HTTP status code: $response)"
   fi
-  sleep 2
+  sleep 2  # Wait for 2 seconds before sending the next request
 done
