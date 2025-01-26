@@ -1,22 +1,22 @@
 pipeline {
     agent any
-    
+
     environment {
-        GIT_CREDENTIALS = 'your-github-credentials-id'  // Replace with your credentials ID
+        GIT_CREDENTIALS = 'your-github-credentials-id'  // Replace with your GitHub credentials ID
     }
 
     stages {
         stage('Checkout Code') {
             steps {
-                // Checkout the code from GitHub
-                git credentialsId: "${GIT_CREDENTIALS}", url: 'https://github.com/yourusername/messaging-app.git'  // Replace with your repo URL
+                // Checkout the code from the specified branch
+                git branch: 'main', credentialsId: "${GIT_CREDENTIALS}", url: 'https://github.com/yourusername/messaging-app.git'  // Replace 'main' and the URL as needed
             }
         }
 
         stage('Install Dependencies') {
             steps {
-                // Install dependencies using pip (ensure you have a requirements.txt file)
-                sh 'pip install -r requirements.txt'
+                // Install dependencies using pip3 (ensure the requirements.txt is in messaging_app folder)
+                sh 'pip3 install -r messaging_app/requirements.txt'
             }
         }
 
@@ -30,9 +30,9 @@ pipeline {
         stage('Generate Test Report') {
             steps {
                 // Generate a test report in HTML format
-                sh 'pytest --maxfail=1 --disable-warnings -q --html=report.html'
-                // Archive the test report so it can be viewed in Jenkins
-                archiveArtifacts artifacts: 'report.html', allowEmptyArchive: true
+                sh 'pytest --maxfail=1 --disable-warnings -q --html=messaging_app/report.html'
+                // Archive the test report
+                archiveArtifacts artifacts: 'messaging_app/report.html', allowEmptyArchive: true
             }
         }
     }
