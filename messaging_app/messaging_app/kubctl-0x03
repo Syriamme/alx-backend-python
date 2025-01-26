@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# Apply the updated blue deployment (version 2.0)
+echo "Applying the updated Blue deployment (version 2.0)..."
+kubectl apply -f blue_deployment.yaml
+
+# Monitor the rolling update status
+echo "Monitoring the rolling update status..."
+kubectl rollout status deployment/django-app-blue
+
+# Use curl to test the application during the update (simulating traffic)
+echo "Testing for downtime or disruption using curl..."
+while true
+do
+  response=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8000) # Assuming the app is accessible at localhost:8000
+  if [ "$response" -eq 200 ]; then
+    echo "App is responsive (HTTP status code: $response)"
+  else
+    echo "App is not responsive (HTTP status code: $response)"
+  fi
+  sleep 2
+done
