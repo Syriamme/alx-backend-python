@@ -1,0 +1,58 @@
+#!/bin/bash
+
+# kubctl-0x01: Scale Kubernetes Deployment and Test Traffic
+
+DEPLOYMENT_NAME="django-messaging-app" # Update if the deployment name is different
+NAMESPACE="default" # Update if the namespace is different
+SERVICE_NAME="django-messaging-app-service"
+
+# Scale the deployment to 3 replicas
+echo "Scaling the deployment to 3 replicas..."
+kubectl scale deployment $DEPLOYMENT_NAME --replicas=3 --namespace=$NAMESPACE
+if [ $? -ne 0 ]; then
+    echo "Failed to scale the deployment. Exiting."
+    exit 1
+fi
+
+# Wait for the pods to be ready
+echo "Waiting for all pods to be running..."
+kubectl rollout status deployment/$DEPLOYMENT_NAME --namespace=$NAMESPACE
+if [ $? -ne 0 ]; then
+    echo "Deployment rollout failed. Exiting."
+    exit 1
+fi
+
+# Verify multiple pods are running
+echo "Checking running pods..."
+kubectl get pods --namespace=$NAMESPACE
+
+# Expose the app on localhost for load testing (port-forwarding)
+echo "Setting up port-forwarding for the service..."
+kubectl port-forward svc/$SERVICE_NAME 8000:8000 --namespace=$NAMESPACE &
+PORT_FORWARD_PID=$!
+sleep 3
+
+# Perform load testing using wrk
+echo "Performing load testing with wrk..."
+if ! command -v wrk &> /dev/null; then
+    echo "wrk is not installed. Please install wrk to perform load testing."
+    kill $PORT_FORWARD_PID
+    exit 1
+fi
+
+wrk -t2 -c50 -d30s http://localhost:8000
+
+# Monitor resource usage
+echo "Monitoring resource usage for the pods..."
+if ! command -v kubectl top &> /dev/null; then
+    echo "kubectl top is not available. Please install the metrics server in your cluster."
+else
+    kubectl top pods --namespace=$NAMESPACE
+fi
+
+# Clean up port-forwarding
+echo "Stopping port-forwarding..."
+kill $PORT_FORWARD_PID
+
+echo "Scaling and testing complete!"
+exit 0
