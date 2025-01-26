@@ -3,43 +3,56 @@ pipeline {
 
     environment {
         GIT_CREDENTIALS = 'your-github-credentials-id'  // Replace with your GitHub credentials ID
+        DOCKERHUB_USERNAME = 'your-dockerhub-username'  // Replace with your Docker Hub username
+        DOCKERHUB_PASSWORD = 'your-dockerhub-password'  // Replace with your Docker Hub password
+        IMAGE_NAME = 'your-dockerhub-username/messaging-app'  // Replace with your desired Docker image name
     }
 
     stages {
         stage('Checkout Code') {
             steps {
-                // Checkout the code from the specified branch
-                git branch: 'main', credentialsId: "${GIT_CREDENTIALS}", url: 'https://github.com/yourusername/messaging-app.git'  // Replace 'main' and the URL as needed
+                git branch: 'main', credentialsId: "${GIT_CREDENTIALS}", url: 'https://github.com/yourusername/messaging-app.git'  // Replace with your repository details
             }
         }
 
         stage('Install Dependencies') {
             steps {
-                // Install dependencies using pip3 (ensure the requirements.txt is in messaging_app folder)
                 sh 'pip3 install -r messaging_app/requirements.txt'
             }
         }
 
         stage('Run Tests') {
             steps {
-                // Run tests using pytest
                 sh 'pytest --maxfail=1 --disable-warnings -q'
             }
         }
 
-        stage('Generate Test Report') {
+        stage('Build Docker Image') {
             steps {
-                // Generate a test report in HTML format
-                sh 'pytest --maxfail=1 --disable-warnings -q --html=messaging_app/report.html'
-                // Archive the test report
-                archiveArtifacts artifacts: 'messaging_app/report.html', allowEmptyArchive: true
+                script {
+                    sh '''
+                    docker build -t ${IMAGE_NAME}:latest .
+                    '''
+                }
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials-id', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        sh '''
+                        echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+                        docker push ${IMAGE_NAME}:latest
+                        '''
+                    }
+                }
             }
         }
     }
 
     post {
         always {
-            // Clean up workspace after the build
             cleanWs()
         }
     }
