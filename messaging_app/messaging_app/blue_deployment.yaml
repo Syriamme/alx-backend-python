@@ -19,6 +19,6 @@ spec:
     spec:
       containers:
       - name: django-app
-        image: your-django-app:blue # Replace with the Docker image for the blue version
+        image: django-messaging-app:blue
         ports:
         - containerPort: 8000

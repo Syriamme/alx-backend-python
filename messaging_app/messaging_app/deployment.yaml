@@ -16,14 +16,14 @@ spec:
     spec:
       containers:
       - name: django-app
-        image: <your-dockerhub-username>/django-messaging-app:latest # Replace with your Docker image
+        image: <your-dockerhub-username>/django-messaging-app:latest
         ports:
         - containerPort: 8000
         env:
         - name: DJANGO_SETTINGS_MODULE
           value: messaging_app.settings
         - name: DATABASE_URL
-          value: postgres://user:password@db-host/db-name # Update to match your DB
+          value: postgres://user:password@db-host/db-name
 ---
 apiVersion: v1
 kind: Service
